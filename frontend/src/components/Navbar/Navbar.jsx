@@ -10,7 +10,11 @@ const Navbar = () => {
         </Link>
         <ul className="navbar-nav flex-row justify-content-end align-items-center">
           <li className="nav-item">
-            <Link className="nav-link active" aria-current="page" to="">
+            <Link
+              className="nav-link active"
+              aria-current="page"
+              to="/archives"
+            >
               Archive
             </Link>
           </li>

@@ -6,16 +6,19 @@ import Navbar from "../../components/Navbar/Navbar";
 import Footer from "../../components/Footer/Footer";
 import Landing from "../Landing/Landing";
 import Plan from "../Plan/Plan";
+import Archive from "../Archive/Archive";
 import "./App.css";
 
 function App() {
   const [plans, setPlans] = useState([]);
+  const [archives, setArchives] = useState([]);
   const [render, setRender] = useState(false);
   useEffect(
     function () {
       const getPlan = async () => {
         const plans = await ApiService.getPlans();
-        setPlans(plans.data);
+        setPlans(plans.data.filter((p) => p.is_archived === false));
+        setArchives(plans.data.filter((p) => p.is_archived === true));
         setRender(false);
       };
       getPlan();
@@ -38,6 +41,10 @@ function App() {
             <Route
               path="/"
               element={<Landing plans={plans} setRender={setRender} />}
+            />
+            <Route
+              path="/archives"
+              element={<Archive archives={archives} setRender={setRender} />}
             />
             <Route
               path="/:id"

@@ -14,20 +14,45 @@ const Card = ({
   priority,
   id,
   setRender,
+  archive,
 }) => {
   const findImg = (category) => {
     return category === "Work" ? Work : category === "Study" ? Study : "";
   };
 
   const handleDetail = async () => {
-    const plan = await ApiService.getPlan(id);
-    console.log(plan);
+    await ApiService.getPlan(id);
   };
 
   const handleDelete = async () => {
     await ApiService.deletePlan(id);
     setRender(true);
   };
+
+  const handleArchive = async () => {
+    const data = {
+      description: desc,
+      category,
+      deadline,
+      title,
+      is_archived: true,
+    };
+    await ApiService.editPlan(id, data);
+    setRender(true);
+  };
+
+  const handleUnarchive = async () => {
+    const data = {
+      description: desc,
+      category,
+      deadline,
+      title,
+      is_archived: false,
+    };
+    await ApiService.editPlan(id, data);
+    setRender(true);
+  };
+
   return (
     <div className="card mb-4 align-items-start" style={{ width: "18rem" }}>
       <img
@@ -45,53 +70,72 @@ const Card = ({
         <p className="card-text">
           <small className="text-muted">{deadline}</small>
         </p>
-        <div className="btn-group" role="group" aria-label="">
-          <Link
-            className="btn btn-primary me-1 btn-sm"
-            type="button"
-            onClick={() => handleDetail()}
-            to={`/${id}`}
-          >
-            Detail
-          </Link>
-          <button
-            className="btn btn-primary me-1 btn-sm"
-            type="button"
-            onClick={() => handleDelete()}
-          >
-            Delete
-          </button>
-          <button className="btn btn-primary me-1 btn-sm" type="button">
-            Archive
-          </button>
-        </div>
-        <div class="dropdown">
-          <button
-            className="btn btn-primary dropdown-toggle mt-1 btn-sm"
-            type="button"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
-          >
-            Progress
-          </button>
-          <ul class="dropdown-menu">
-            <li>
-              <Link class="dropdown-item" href="#">
-                Action
+
+        {!archive ? (
+          <div>
+            <div className="btn-group" role="group" aria-label="">
+              <Link
+                className="btn btn-primary me-1 btn-sm"
+                type="button"
+                onClick={() => handleDetail()}
+                to={`/${id}`}
+              >
+                Detail
               </Link>
-            </li>
-            <li>
-              <Link class="dropdown-item" href="#">
-                Another action
-              </Link>
-            </li>
-            <li>
-              <Link class="dropdown-item" href="#">
-                Something else here
-              </Link>
-            </li>
-          </ul>
-        </div>
+              <button
+                className="btn btn-primary me-1 btn-sm"
+                type="button"
+                onClick={() => handleDelete()}
+              >
+                Delete
+              </button>
+              <button
+                className="btn btn-primary me-1 btn-sm"
+                type="button"
+                onClick={() => handleArchive()}
+              >
+                Archive
+              </button>
+            </div>
+            <div class="dropdown">
+              <button
+                className="btn btn-primary dropdown-toggle mt-1 btn-sm"
+                type="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                Progress
+              </button>
+              <ul class="dropdown-menu">
+                <li>
+                  <Link class="dropdown-item" href="#">
+                    Action
+                  </Link>
+                </li>
+                <li>
+                  <Link class="dropdown-item" href="#">
+                    Another action
+                  </Link>
+                </li>
+                <li>
+                  <Link class="dropdown-item" href="#">
+                    Something else here
+                  </Link>
+                </li>
+              </ul>
+            </div>
+          </div>
+        ) : (
+          <div>
+            <button
+              className="btn btn-primary me-1 btn-sm"
+              type="button"
+              onClick={() => handleUnarchive()}
+            >
+              Unarchive
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

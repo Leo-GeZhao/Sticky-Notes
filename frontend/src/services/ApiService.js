@@ -19,3 +19,7 @@ export const editPlan = async (id, data) => {
 export const deletePlan = async (id) => {
   return await axios.delete(`http://localhost:8000/api/plan/${id}`);
 };
+
+export const archivePlan = async (id) => {
+  return await axios.put(`http://localhost:8000/api/plan/${id}`);
+};
