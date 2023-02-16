@@ -39,7 +39,10 @@ function App() {
               path="/"
               element={<Landing plans={plans} setRender={setRender} />}
             />
-            <Route path="/:id" element={<Plan setRender={setRender} />} />
+            <Route
+              path="/:id"
+              element={<Plan setRender={setRender} render={render} />}
+            />
           </Routes>
         </div>
       </main>

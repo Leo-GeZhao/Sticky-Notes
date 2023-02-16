@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import Card from "../../components/Card/Card";
+
+import { Calendar } from "react-date-range";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
-import { Calendar } from "react-date-range";
+
 import * as ApiService from "../../services/ApiService";
 
 const defaultForm = {
