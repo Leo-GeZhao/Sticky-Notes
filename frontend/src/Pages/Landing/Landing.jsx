@@ -16,6 +16,7 @@ const Landing = ({ plans, setRender }) => {
   const [deadline, setDeadline] = useState(new Date());
   const [isPriority, setIsPriority] = useState(false);
   const [formData, setFormData] = useState(defaultForm);
+
   const { title, description, category } = formData;
 
   const handleChange = (e) => {

@@ -27,33 +27,28 @@ class CreatePlanView(APIView):
             is_priority = serializer.data.get('is_priority')
             is_archived = serializer.data.get('is_archived') if serializer.data.get('is_archived') else False
 
-            querySet = Plan.objects.filter(title=title)
-            if querySet.exists():
-                plan = querySet[0]
-                plan.category = category
-                plan.description = description
-                plan.deadline = deadline
-                plan.is_priority = is_priority
-                plan.is_archived = is_archived 
-                plan.save(update_fields=["category", "description", "deadline", "is_priority", "is_archived"])
-                return Response(PlanSerializer(plan).data, status=status.HTTP_200_OK)
-            else:
-                plan = Plan(
-                    title = title,
-                    category = category,
-                    description = description,
-                    deadline = deadline,
-                    is_priority = is_priority,
-                    is_archived = is_archived)
-                plan.save()
-                return Response(PlanSerializer(plan).data, status=status.HTTP_201_CREATED)
+            # querySet = Plan.objects.filter(title=title)
+            # if querySet.exists():
+            #     plan = querySet[0]
+            #     plan.category = category
+            #     plan.description = description
+            #     plan.deadline = deadline
+            #     plan.is_priority = is_priority
+            #     plan.is_archived = is_archived 
+            #     plan.save(update_fields=["category", "description", "deadline", "is_priority", "is_archived"])
+            #     return Response(PlanSerializer(plan).data, status=status.HTTP_200_OK)
+            # else:
+            plan = Plan(
+                title = title,
+                category = category,
+                description = description,
+                deadline = deadline,
+                is_priority = is_priority,
+                is_archived = is_archived)
+            plan.save()
+            return Response(PlanSerializer(plan).data, status=status.HTTP_201_CREATED)
         
         return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
-    
-    def delete(self, request, pk, format=None):
-        plan = self.get_object(pk)
-        plan.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
 
 class PlanDetail(APIView):
 

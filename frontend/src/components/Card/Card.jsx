@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Work from "../../img/Work.webp";
 import Study from "../../img/Study.webp";
 import { Link } from "react-router-dom";
@@ -8,7 +8,6 @@ import * as ApiService from "../../services/ApiService";
 const Card = ({
   category,
   title,
-  start,
   deadline,
   desc,
   priority,
@@ -16,6 +15,7 @@ const Card = ({
   setRender,
   archive,
 }) => {
+  const [progress, setProgress] = useState("");
   const findImg = (category) => {
     return category === "Work" ? Work : category === "Study" ? Study : "";
   };
@@ -29,25 +29,31 @@ const Card = ({
     setRender(true);
   };
 
-  const handleArchive = async () => {
+  const handleToggleArchive = async () => {
     const data = {
       description: desc,
       category,
       deadline,
       title,
-      is_archived: true,
+      is_archived: archive ? false : true,
     };
     await ApiService.editPlan(id, data);
     setRender(true);
   };
 
-  const handleUnarchive = async () => {
+  const handleGetProgress = async () => {
+    const progress = await ApiService.getProgress(id);
+    setProgress(progress.data);
+  };
+
+  const handlePrioritize = async () => {
     const data = {
       description: desc,
       category,
       deadline,
       title,
-      is_archived: false,
+      is_archived: archive,
+      is_priority: priority ? false : true,
     };
     await ApiService.editPlan(id, data);
     setRender(true);
@@ -62,17 +68,24 @@ const Card = ({
         style={{ height: "160px", objectFit: "cover" }}
       />
       <div className="card-body d-flex flex-column align-items-start">
-        <h5 className="card-title">
-          {" "}
-          {title} {priority ? "yes" : "no"}
+        <h5 className="card-text">
+          {desc}{" "}
+          {priority && (
+            <span
+              className="badge rounded-pill text-bg-danger"
+              style={{ fontSize: "12px" }}
+            >
+              Priority
+            </span>
+          )}
         </h5>
-        <p className="card-text">{desc}</p>
+
         <p className="card-text">
           <small className="text-muted">{deadline}</small>
         </p>
 
         {!archive ? (
-          <div>
+          <div className="d-flex flex-column align-items-start">
             <div className="btn-group" role="group" aria-label="">
               <Link
                 className="btn btn-primary me-1 btn-sm"
@@ -92,37 +105,44 @@ const Card = ({
               <button
                 className="btn btn-primary me-1 btn-sm"
                 type="button"
-                onClick={() => handleArchive()}
+                onClick={() => handleToggleArchive()}
               >
                 Archive
               </button>
             </div>
-            <div class="dropdown">
-              <button
-                className="btn btn-primary dropdown-toggle mt-1 btn-sm"
-                type="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
-                Progress
-              </button>
-              <ul class="dropdown-menu">
-                <li>
-                  <Link class="dropdown-item" href="#">
-                    Action
-                  </Link>
-                </li>
-                <li>
-                  <Link class="dropdown-item" href="#">
-                    Another action
-                  </Link>
-                </li>
-                <li>
-                  <Link class="dropdown-item" href="#">
-                    Something else here
-                  </Link>
-                </li>
-              </ul>
+            <div className="btn-group mt-1">
+              <div>
+                <button
+                  type="button"
+                  className="btn btn-primary btn-sm"
+                  onClick={() => handlePrioritize()}
+                >
+                  Prioritize
+                </button>
+              </div>
+              <div class="dropdown">
+                <button
+                  className="btn btn-primary dropdown-toggle btn-sm ms-1"
+                  type="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                  onClick={() => handleGetProgress()}
+                >
+                  Progress
+                </button>
+                <ul class="dropdown-menu">
+                  {progress &&
+                    progress.map((p) => (
+                      <li
+                        className={`p-1 ${
+                          p.is_complete ? "text-success" : "text-danger"
+                        }`}
+                      >
+                        {p.progress}
+                      </li>
+                    ))}
+                </ul>
+              </div>
             </div>
           </div>
         ) : (
@@ -130,7 +150,7 @@ const Card = ({
             <button
               className="btn btn-primary me-1 btn-sm"
               type="button"
-              onClick={() => handleUnarchive()}
+              onClick={() => handleToggleArchive()}
             >
               Unarchive
             </button>
