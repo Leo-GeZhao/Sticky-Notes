@@ -9,7 +9,7 @@ import * as ApiService from "../../services/ApiService";
 
 const customStyles = {
   content: {
-    top: "20%",
+    top: "15%",
     borderRadius: "1rem",
     padding: "2rem 1rem",
   },

@@ -21,3 +21,15 @@ class Plan(models.Model):
     
     class Meta:
         ordering = ['deadline']
+
+class Progress(models.Model):
+    progress = models.CharField(max_length = 100)
+    create_date = models.DateField(auto_now_add = True)
+    is_complete = models.BooleanField(default = False)
+    plan = models.ForeignKey(Plan, on_delete = models.CASCADE, related_name = 'progress')
+
+    def __str__(self):
+        return f"{self.progress} made on {self.create_date}"
+    
+    class Meta:
+        ordering = ['create_date']

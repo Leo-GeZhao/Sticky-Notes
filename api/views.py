@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import generics, status
-from .models import Plan
-from .serializers import PlanSerializer, CreatePlanSerializer
+from .models import Plan, Progress
+from .serializers import PlanSerializer, CreatePlanSerializer, ProgressSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
@@ -70,7 +70,6 @@ class PlanDetail(APIView):
         serializer = PlanSerializer(plan, data=request.data)
         
         if serializer.is_valid():
-            
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -79,3 +78,52 @@ class PlanDetail(APIView):
         plan = self.get_object(pk)
         plan.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+# Progress
+
+class ProgressList(APIView):
+    
+    def get(self, request, pk, format=None):
+        progress = Progress.objects.filter(plan_id = pk)
+        serializer = ProgressSerializer(progress, many=True)
+        return Response(serializer.data)
+    
+    def post(self, request, format=None):
+        serializer = ProgressSerializer(data = request.data)
+        print(serializer)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def put(self, request, pk, format=None):
+        progress = Progress.objects.get(id = pk)
+        print(progress)
+        serializer = ProgressSerializer(progress, data=request.data)
+        
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def delete(self, request, pk, format=None):
+        progress = Progress.objects.get(id = pk)
+        progress.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    # def post(self, pk, request, format=None):
+    #     # plan = Plan.objects.get(pk)
+    #     print(pk)
+    #     serializer = ProgressSerializer(data = request.data)
+    #     if serializer.is_valid():
+    #         progress = serializer.data.get('progress')
+    #         plan_id = pk
+    #         is_completed = False
+    #         progress = Progress(
+    #                 progress = progress,
+    #                 plan_id = plan_id,
+    #                 is_completed = is_completed,
+    #         )
+    #         progress.save()
+    #     return Response(ProgressSerializer(progress).data, status=status.HTTP_201_CREATED)
+           
